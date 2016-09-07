@@ -1,47 +1,52 @@
 clc; clear; close all;
-%im = imread('data/01112v.jpg');
-im = imread('data_hires/01861a.tif');
+SIZE_THRESH = 400;
+
+% im = imread('data/01112v.jpg');
+im = imread('data_hires/01047u.tif');
 [h,w] = size(im);
 % cut the image vertically
 h = uint32(floor(h/3));
 bim = im(1:h,:);
 gim = im(h+1:2*h,:);
 rim = im(2*h+1:3*h,:);
-if w<500
+
+if w< SIZE_THRESH
     % aligned each channel
-    align_vector_g = align_image(rim, gim);
-    align_vector_b = align_image(rim, bim);
+    [aligned_gim, align_vector_g] = align_channels(rim, gim, 10);
+    [aligned_bim, align_vector_b] = align_channels(rim, bim, 10);
+    aligned_im = cat(3,rim,aligned_gim,aligned_bim);
+    imshow(aligned_im);
 else
     % for high resolution, find an patch contains most edgelets to compute the
     % align vector
-    edge_rim = edge(rim,'Canny');
-    max_patch_sum = 0;
-    patch_location = [0,0];
-    patch_size = uint32( min(size(rim))/5);
-    for i = 1:patch_size:size(edge_rim,1)-patch_size
-        for j = 1:patch_size:size(edge_rim,2)-patch_size
-            submat = edge_rim(i:i+patch_size, j:j+patch_size);
-            if sum(sum(submat))>max_patch_sum
-                patch_location=[i,j];
-            end
-        end
+    % down sampling first
+    im_pyramid = {};
+    [h,w] = size(rim);
+    while size(rim,1)>SIZE_THRESH
+        im_pyramid = [{rim,gim,bim};im_pyramid];
+        rim = imresize(rim,1/2,'nearest');
+        bim = imresize(bim,1/2,'nearest');
+        gim = imresize(gim,1/2,'nearest');
     end
-    i = patch_location(1);
-    j = patch_location(2);
-    rim_patch = rim(i:i+patch_size, j:j+patch_size);
-    gim_patch = gim(i:i+patch_size, j:j+patch_size);
-    bim_patch = bim(i:i+patch_size, j:j+patch_size);
-    imshow(cat(2,rim_patch,gim_patch,bim_patch));
+   
+    [aligned_gim, align_vector_g] = align_channels(rim, gim, 10);
+    [aligned_bim, align_vector_b] = align_channels(rim, bim, 10);
     
-    align_vector_g = align_image(rim_patch, gim_patch);
-    align_vector_b = align_image(rim_patch, bim_patch);
-    
-    bim_patch = circshift(bim_patch,align_vector_b);
-    gim_patch = circshift(gim_patch,align_vector_g);
-    figure,imshow(cat(2,bim_patch,gim_patch))
+    for i = 1:size(im_pyramid,1)
+        align_vector_g = 2*align_vector_g;
+        align_vector_b = 2*align_vector_b;
+        
+        [rim,gim,bim] = im_pyramid{i,:};
+        gim = circshift(gim, align_vector_g);
+        bim = circshift(bim, align_vector_b);
+        
+        [aligned_gim, align_vector_g_new] = align_channels(rim, gim, 5);
+        [aligned_bim, align_vector_b_new] = align_channels(rim, bim, 5);
+        
+        align_vector_g = align_vector_g_new + align_vector_g;
+        align_vectro_b = align_vector_b_new + align_vector_b;
+        
+        aligned_im = cat(3,rim,aligned_gim,aligned_bim);
+        figure,imshow(aligned_im);
+    end
 end
-% aligned_bim = circshift(bim,align_vector_b);
-% aligned_gim = circshift(gim,align_vector_g);
-% aligned_im = cat(3,rim,aligned_gim,aligned_bim);
-% simple_aligned_im = cat(3,rim,gim,bim);
-% figure,imshow(cat(2,simple_aligned_im,aligned_im));

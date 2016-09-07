@@ -1,35 +1,46 @@
-function align_vector = align_image(im1, im2)
-% im1 is the image stay still
-% im2 is the image to be shifted and align to im1
-edge1 = edge(im1, 'Canny');
-edge2 = edge(im2, 'Canny');
+function aligned_im = align_image(im)
+SIZE_THRESH = 400;
+% cut the image vertically
+[h,w] = size(im);
+h = uint32(floor(h/3));
+bim = im(1:h,:);
+gim = im(h+1:2*h,:);
+rim = im(2*h+1:3*h,:);
 
-% Add dilate image processing for the weak edge extraction
-SE = strel('square',2);
-edge1 = imdilate(edge1,SE);
-edge2 = imdilate(edge2,SE);
-
-figure, imshow(cat(2,edge1,edge2));
-
-% edge1 is the edge image stay still
-% edge2 is the edge image to be shifted
-sd = 100;
-sd_mat = zeros(sd*2+1);
-
-for i = -sd:sd
-    for j = -sd:sd
-        edge_shift = circshift(edge2,[i,j]);
-        add_edge = edge_shift & edge1;
-        sd_mat(i+sd+1,j+sd+1) = sum(sum(add_edge));
+if w< SIZE_THRESH
+    % aligned each channel
+    [aligned_gim, ~] = align_channels(rim, gim, 10);
+    [aligned_bim, ~] = align_channels(rim, bim, 10);
+    aligned_im = cat(3,rim,aligned_gim,aligned_bim);
+else
+    % for high resolution, find an patch contains most edgelets to compute the
+    % align vector
+    % down sampling first
+    im_pyramid = {};
+    while size(rim,1)>SIZE_THRESH
+        im_pyramid = [{rim,gim,bim};im_pyramid];
+        rim = imresize(rim,1/2,'nearest');
+        bim = imresize(bim,1/2,'nearest');
+        gim = imresize(gim,1/2,'nearest');
     end
+   
+    [aligned_gim, align_vector_g] = align_channels(rim, gim, 10);
+    [aligned_bim, align_vector_b] = align_channels(rim, bim, 10);
+    
+    for i = 1:size(im_pyramid,1)
+        align_vector_g = 2*align_vector_g;
+        align_vector_b = 2*align_vector_b;
+        
+        [rim,gim,bim] = im_pyramid{i,:};
+        gim = circshift(gim, align_vector_g);
+        bim = circshift(bim, align_vector_b);
+        
+        [aligned_gim, align_vector_g_new] = align_channels(rim, gim, 1);
+        [aligned_bim, align_vector_b_new] = align_channels(rim, bim, 1);
+        
+        align_vector_g = align_vector_g_new + align_vector_g;
+        align_vector_b = align_vector_b_new + align_vector_b;
+    end
+    aligned_im = cat(3,rim,aligned_gim,aligned_bim);
 end
-
-max_add = max(max(sd_mat));
-[h,w] = find(sd_mat==max_add);
-h = h(1)-sd-1;
-w = w(1)-sd-1;
-
-align_vector = [h,w];
-return
-
 

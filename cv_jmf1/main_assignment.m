@@ -20,4 +20,13 @@ for i=1:3
 end;
 figure, imagesc(squared_diff);
 
-% bayer pattern 
+% image alignment
+im = imread('data/01112v.jpg');
+im = align_image(im);
+figure, imshow(im);
+
+% bonus part
+im = imread('data_hires/01047u.tif');
+im = align_image(im);
+figure, imshow(im);
+
