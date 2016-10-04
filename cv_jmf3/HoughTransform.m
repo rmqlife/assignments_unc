@@ -1,7 +1,6 @@
-clc; clear; close all;
-% Hough Transform
+function HoughTransform
+% data prepare
 [x,y] = Line2(100);
-
 
 canvas = zeros(500,180);
 phis = [];
