@@ -1,5 +1,5 @@
 clc; close all; clear;
 LeastSquare1;
 LeastSquare2;
-RANSAC;
-HoughTransform;
+RANSAC_demo;
+HoughTransform_demo;

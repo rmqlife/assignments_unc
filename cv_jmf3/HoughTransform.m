@@ -1,10 +1,7 @@
-function HoughTransform
-% data prepare
-[x,y] = Line2(100);
-
+function B = houghTransform(x,y,show_fag)
 canvas = zeros(500,180);
 phis = [];
-vis_mat = [20;200];
+vis_mat = [10;200];
 for i = 1:size(x,1)
     for theta = 1:180
         phi = x(i)*cos(pi*theta/180) + y(i)* sin(pi*theta/180);
@@ -13,8 +10,7 @@ for i = 1:size(x,1)
         canvas(phi,theta) = canvas(phi,theta) +1 ;
     end
 end
-figure;
-imagesc(canvas);
+
 % find the max
 [~, ind] = max(canvas(:));
 [phi,theta] = ind2sub(size(canvas),ind);
@@ -24,7 +20,8 @@ phi = (phi - vis_mat(2))/vis_mat(1);
 % m = -cos(theta)/sin(theta) 
 % b = phi/sin(theta)
 B = [-cot(theta*pi/180);phi/sin(theta*pi/180)];
+if show_fag
+    figure;
+    imagesc(canvas);
 
-figure;
-plot(x,y,'r.'); hold;
-plot(x,[x,ones(size(x))]*B,'b');
+end
