@@ -5,10 +5,9 @@ im2 = imread('wall\im2.pgm');
 [pt1,feat1] = naive_corner_nms(im);
 [pt2,feat2] = naive_corner_nms(im2);
 % show corners
-imshow(im); hold on;
+imshow([im,im2]); hold on;
 plot(pt1(:,2),pt1(:,1),'ro');
-figure; imshow(im2); hold on;
-plot(pt2(:,2),pt2(:,1),'ro');
+plot(size(im,2)+pt2(:,2),pt2(:,1),'bo');
 
 %feature descriptor
 show_ssd = 0;
@@ -22,3 +21,9 @@ if show_ssd
     figure,imagesc(k);
 end
 
+%match feature
+for i = 1:size(feat1,1)
+    for j =1:size(feat2,1)
+        
+    end
+end
