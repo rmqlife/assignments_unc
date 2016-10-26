@@ -3,14 +3,18 @@ im = imread('wall\im1.pgm');
 im2 = imread('wall\im2.pgm');
 % naive method for corner detection
 [pt1,feat1] = naive_corner_nms(im);
-[pt2,feat2] = naive_corner_nms(im2);
+[pt2,f] = naive_corner_nms(im2);
 % show corners
 imshow(im); hold on;
-plot(pt1(:,2),pt1(:,1),'ro');
+plot(x,y,'ro');
 figure; imshow(im2); hold on;
-plot(pt2(:,2),pt2(:,1),'ro');
+plot(x2,y2,'ro');
 
 %feature descriptor
+
+
+
+
 show_ssd = 0;
 if show_ssd
     k = zeros(size(x,1),size(x2,1));

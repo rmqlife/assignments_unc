@@ -1,4 +1,4 @@
-function [y,x,feature] = naive_corner_nms(im)
+function [pt,feature] = naive_corner_nms(im)
 
 I = double(im);
 Ix = conv2(I,[1,0,-1],'same');
@@ -16,18 +16,14 @@ Ixy = filter2(k,Ixy);
 % corner response 
 R = zeros(size(I));
 alpha = 0.05; % from 0.04 to 0.06
-feature = cell(size(I));
 for i = 1:size(I,1)
     for j = 1:size(I,2)
         M = [Ix2(i,j), Ixy(i,j); Ixy(i,j), Iy2(i,j)];
         R(i,j) = det(M) - alpha*trace(M)^2;
-        % M feature vector
-        Mf = M(:);
-        feature{i,j} = Mf;
     end
 end
 
-[val,ind] = sort(R(:),'descend'); 
+[~,ind] = sort(R(:),'descend'); 
 ind = ind(1:1000);
 val = R(ind);
 [x,y] = ind2sub(size(R),ind);
@@ -45,6 +41,7 @@ end
 
 x = selected(:,2);
 y = selected(:,3);
+
 ind = sub2ind(size(R),x,y);
-feature_selected = feature(ind);
-feature = feature_selected;
+feature = [Ix(ind),Iy(ind)];
+pt = [x,y];
