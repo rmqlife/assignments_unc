@@ -27,15 +27,13 @@ if 0
 end
 
 % brute match
-match_set = zeros(size(pt1,1),2);
+match = zeros(size(pt
 for i = 1:size(feat1,1)
    [val,ind] = min(pdist2(feat1(i,:),feat2));
    %pt1(i,:),pt2(ind,:)
    plot(pt1(i,2),pt1(i,1),'ro');
    plot(pt2(ind,2)+size(im1,2),pt2(ind,1),'bo');
    plot([pt1(i,2),pt2(ind,2)+size(im1,2)],[pt1(i,1),pt2(ind,1)],'g-');
-   match_set(i,:) = [i,ind];
+   
 end
 
-% RANSAC to filter the match set
-% find the homography and tranformation

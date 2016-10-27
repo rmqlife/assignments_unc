@@ -1,4 +1,4 @@
-function [pt,feature] = naive_corner_nms(im)
+function [pt] = naive_corner_nms(im)
 
 I = double(im);
 Ix = conv2(I,[1,0,-1],'same');
@@ -42,6 +42,4 @@ end
 x = selected(:,2);
 y = selected(:,3);
 
-ind = sub2ind(size(R),x,y);
-feature = [Ix(ind),Iy(ind)];
 pt = [x,y];
