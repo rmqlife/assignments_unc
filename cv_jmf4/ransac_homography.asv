@@ -1,0 +1,19 @@
+%ransac_homography
+% choose 4 pairs of matches
+inds = randi(size(match_set,1),[4,1]);
+inds1 = match_set(inds,1);
+inds2 = match_set(inds,2);
+samp_pt1 = pt1(inds1,:);
+samp_pt2 = pt2(inds2,:);
+
+A = [];
+for i=1:4
+    row = homography_mat(samp_pt1(i,1),samp_pt1(i,2),samp_pt2(i,1),samp_pt2(i,2));
+    A = [A;row];
+end
+% V:eigen vectors and D:eigenvalues
+[V,D] = eig(A'*A);
+% smallest
+H = reshape(V(:,1),[3,3]);
+
+pt1 = pt1,size(pt1,1)

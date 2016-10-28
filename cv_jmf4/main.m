@@ -10,8 +10,8 @@ imshow([im1,im2]); hold on;
 %plot(size(im1,2)+pt2(:,2),pt2(:,1),'bo');
 
 %feature descriptor
-feat1 = feature_descriptor(im1,pt1);
-feat2 = feature_descriptor(im2,pt2);
+feat1 = feature_descriptor(im1,pt1,20,5);
+feat2 = feature_descriptor(im2,pt2,20,5);
 
 feature_distance_map = zeros(size(feat1,1),size(feat2,1));
 
@@ -39,3 +39,5 @@ end
 
 % RANSAC to filter the match set
 % find the homography and tranformation
+
+

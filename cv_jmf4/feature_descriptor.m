@@ -1,6 +1,5 @@
-function feature = feature_descriptor(im,pt)
-w = 20;
-w_small = 4;
+function feature = feature_descriptor(im,pt,w,w_small)
+
 feature = zeros(size(pt,1),w_small^2);
 % add border of im
 ext_im = uint8(zeros(size(im)+[w*2,w*2]));
