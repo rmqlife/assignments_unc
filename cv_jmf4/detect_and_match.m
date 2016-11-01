@@ -3,8 +3,8 @@ function match_points = detect_and_match(im1,im2)
 pt1 = naive_corner_nms(im1);
 pt2 = naive_corner_nms(im2);
 %feature descriptor
-feat1 = feature_descriptor(im1,pt1,20,5);
-feat2 = feature_descriptor(im2,pt2,20,5);
+feat1 = feature_descriptor(im1,pt1,15,5);
+feat2 = feature_descriptor(im2,pt2,15,5);
 
 feature_distance_map = zeros(size(feat1,1),size(feat2,1));
 % match feature
