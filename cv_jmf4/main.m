@@ -1,6 +1,6 @@
 clc; clear; close all;
-im1 = imread('wall\im2.pgm');
-im2 = imread('wall\im1.pgm');
+im1 = imread('wall/im2.pgm');
+im2 = imread('wall/im1.pgm');
 
 match_points = detect_and_match(im1,im2);
 % RANSAC to filter the match set
@@ -24,7 +24,7 @@ track_im = imwarp(track_im,tform);
 
 [num, idx] = max(track_im(:));
 [x1, y1] = ind2sub(size(track_im),idx);
-shift_vector = (final_match_points(1,3:4) - [x1,y1]);
+shift_vector = ((final_match_points1,3:4) - [x1,y1]);
 
 
 shift_add_images(warp1,im2,shift_vector);

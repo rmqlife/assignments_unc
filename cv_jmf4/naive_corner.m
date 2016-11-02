@@ -1,4 +1,4 @@
-function [y,x] = naive_corner(im)
+function [pt] = naive_corner(im)
 
 I = double(im);
 Ix = conv2(I,[1,0,-1],'same');
@@ -30,3 +30,4 @@ end
 [~,ind] = sort(R(:),'descend');
 ind = ind(1:1000);
 [x,y] = ind2sub(size(R),ind);
+pt = [x,y];
